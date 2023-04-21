@@ -26,15 +26,15 @@ jobs:
         run: |
           echo "${{steps.changed-files.outputs.all_changed_files}}"
           echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]'
-          # changed_files=$(echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]')
-          # filenames=()
-          # for file in $changed_files; do
-          #   filename=$(basename $file)
-          #   jsname=${filename%.*}
-          #   echo $jsname
-          #   filenames+=("$jsname")
-          # done
-          # echo $filenames
+          changed_files=$(echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]')
+          filenames=()
+          for file in $changed_files; do
+            filename=$(basename $file)
+            jsname=${filename%.*}
+            echo $jsname
+            filenames+=("$jsname")
+          done
+          echo $filenames
 
     # - name: Call New Relic Entity Search GraphQL API
     #   if: steps.get-changed-scripts.outputs.any_changed == 'true'
