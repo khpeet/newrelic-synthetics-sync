@@ -25,10 +25,17 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo ${{steps.changed-files.outputs.all_changed_files}}
-          echo "${{steps.changed-files.outputs.all_changed_files}}" | tr '\n' ',' | sed 's/.$//' > files.txt
-
-          for file in $(cat files.txt); do
-            echo "Storing contents of $file"
-            script=$(cat "$file")
-            echo $script
+          changed_files=(${steps.changed-files.outputs.all_changed_files})
+          filenames=()
+          contents=()
+          for file in "${changed_files[@]}"
+          do
+            monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
+            echo $monitorName
+            filename=$(basename "$file")
+            filenames+=("$filename")
+            content=$(cat "$file")
+            contents+=("$content")
           done
+          echo "File names: ${filenames[@]}"
+          echo "File contents: ${contents[@]}"
