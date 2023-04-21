@@ -39,6 +39,7 @@ jobs:
         done <<< "$CHANGED_FILES"
 
     - name: Call New Relic Entity Search GraphQL API
+      if: ${{ success() }}
       env:
         NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }} # Add your New Relic API key as a secret in your GitHub repository
       id: search_entities
