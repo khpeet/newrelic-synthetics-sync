@@ -19,23 +19,13 @@ jobs:
         with:
           files: |
             **/*.js
-          json: "true"
+          json_raw_format: "true"
 
       - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo ${{steps.changed-files.outputs.all_changed_files}}
-          filenames=()
-          contents=()
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo $GITHUB_WORKSPACE
+          for file in $GITHUB_WORKSPACE/${{steps.changed-files.outputs.all_changed_files}}; do
+            echo "File: $file"
             cat "$file"
           done
-          #   monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
-          #   echo $monitorName
-          #   filenames+=("$monitorName")
-          #   echo "$GITHUB_WORKSPACE/$file"
-          #   content=$(cat "$GITHUB_WORKSPACE/$file")
-          #   contents+=("$content")
-          # done
-          # echo "File names: ${filenames[@]}"
-          # echo "File contents: ${contents[@]}"
