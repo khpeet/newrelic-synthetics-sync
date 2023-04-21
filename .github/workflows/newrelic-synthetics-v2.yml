@@ -21,29 +21,29 @@ jobs:
 
     - name: Check if any JavaScript files changed
       run: |
-        CHANGED_FILES="${{ steps.get_changed_files.outputs.files }}"
+        CHANGED_FILES="${{ steps.get-changed-scripts.outputs.files }}"
         if [ -z "$CHANGED_FILES" ]; then
           echo "No JavaScript files changed."
           exit 0
         fi
 
     - name: Extract file names
-      if: steps.changed-scripts.outputs.any_changed == 'true'
-      id: extract_files
+      if: steps.get-changed-scripts.outputs.any_changed == 'true'
+      id: extract-files
       run: |
-        CHANGED_FILES="${{ steps.get_changed_files.outputs.files }}"
+        CHANGED_FILES="${{ steps.get-changed-scripts.outputs.files }}"
         while read -r FILE; do
           FILE_NAME=$(basename -- "$FILE")
           echo "::set-output name=names::$FILE_NAME"
         done <<< "$CHANGED_FILES"
 
     - name: Call New Relic Entity Search GraphQL API
-      if: steps.changed-scripts.outputs.any_changed == 'true'
+      if: steps.get-changed-scripts.outputs.any_changed == 'true'
       env:
         NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }} # Add your New Relic API key as a secret in your GitHub repository
       id: search_entities
       run: |
-        FILE_NAMES="${{ steps.extract_files.outputs.names }}"
+        FILE_NAMES="${{ steps.extract-files.outputs.names }}"
 
         # Split file names into an array
         IFS=$'\n' read -rd '' -a FILE_NAME_ARRAY <<<"$FILE_NAMES"
