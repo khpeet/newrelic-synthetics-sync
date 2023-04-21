@@ -21,41 +21,8 @@ jobs:
             **/*.js
           json: "true"
 
-      - name: Extract File Names
+      - name: Sync with New Relic Synthetics #Use custom python here to parse files, run entitySearch, and upload to NR
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           # Parse out filenames to use as monitorNames in New Relic
-          readarray -t js_filenames <<< "$(echo "${{steps.changed-files.outputs.all_changed_files}}" | xargs -I{} basename "{}")"
-          echo $js_filenames
-
-    # - name: Call New Relic Entity Search GraphQL API
-    #   if: steps.get-changed-scripts.outputs.any_changed == 'true'
-    #   env:
-    #     NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }} # Add your New Relic API key as a secret in your GitHub repository
-    #   id: search_entities
-    #   run: |
-    #     FILE_NAMES="${{ steps.extract-files.outputs.names }}"
-    #
-    #     # Split file names into an array
-    #     IFS=$'\n' read -rd '' -a FILE_NAME_ARRAY <<<"$FILE_NAMES"
-    #
-    #     ENTITY_DATA=""
-    #     for i in "${!FILE_NAME_ARRAY[@]}"; do
-    #       FILE_NAME="${FILE_NAME_ARRAY[$i]}"
-    #
-    #       # Make API request to search for New Relic entity with the same name as the file and filtering to domain:SYNTH
-    #       RESPONSE=$(curl -s -X POST 'https://api.newrelic.com/graphql' \
-    #       -H "Content-Type: application/json" \
-    #       -H "API-Key: $NEW_RELIC_API_KEY" \
-    #       -d '{"query":"query SearchEntities($searchQuery: String!) { actor { entitySearch(query: $searchQuery) { count results { entities { name domain guid } } } } } }","variables":{"searchQuery":"name:'"$FILE_NAME"' domain:SYNTH"}}')
-    #
-    #       # Check if API request was successful and entity with the same name as the file exists
-    #       if [[ $RESPONSE == *"\"name\": \"$FILE_NAME\""* ]]; then
-    #         # Extract guid from API response
-    #         GUID=$(echo "$RESPONSE" | jq -r '.data.actor.entitySearch.results.entities[0].guid')
-    #         ENTITY_DATA+="$FILE_NAME:$GUID\n"
-    #       else
-    #         echo "No New Relic entity with the name $FILE_NAME found."
-    #       fi
-    #     done
-    #     echo "::set-output name=entities::$ENTITY_DATA"
+          echo ${{steps.changed-files.outputs.all_changed_files}}
