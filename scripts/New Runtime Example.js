@@ -3,7 +3,7 @@ var elementWaitTimer = 10000;
 
 const url_to_monitor = 'https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=simple-login-form';
 const user = 'keagan12322';
-const pass = 'testasd';
+const pass = 'testasdsad';
 /** CONFIGURATION **/
 
 async function stepOne() { //get homepage + validate element on page
