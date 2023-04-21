@@ -28,12 +28,13 @@ jobs:
           filenames=()
           contents=()
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
-            echo $monitorName
-            filenames+=("$monitorName")
-            echo "$GITHUB_WORKSPACE/$file"
-            content=$(cat "$GITHUB_WORKSPACE/$file")
-            contents+=("$content")
-          done
-          echo "File names: ${filenames[@]}"
-          echo "File contents: ${contents[@]}"
+            cat "$file"
+          #   monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
+          #   echo $monitorName
+          #   filenames+=("$monitorName")
+          #   echo "$GITHUB_WORKSPACE/$file"
+          #   content=$(cat "$GITHUB_WORKSPACE/$file")
+          #   contents+=("$content")
+          # done
+          # echo "File names: ${filenames[@]}"
+          # echo "File contents: ${contents[@]}"
