@@ -2,12 +2,12 @@
 var elementWaitTimer = 10000;
 
 const url_to_monitor = 'https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=simple-login-form';
-const user = 'keagan';
+const user = 'keagan1';
 const pass = 'test';
 /** CONFIGURATION **/
 
 async function stepOne() { //get homepage + validate element on page
-  var loginHeaderXpath = "//h2[text()='Log in']"; 
+  var loginHeaderXpath = "//h2[text()='Log in']";
 
   try {
     console.log('Hitting tutorial site: https://www.tutorialrepublic.com/');
