@@ -1,0 +1,22 @@
+name: newrelic-synthetics
+
+on: [push]
+
+env:
+  NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }}
+
+jobs:
+  newrelic-synthetics:
+    name: newrelic-synthetics
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed scripts
+        id: changed-scripts
+        uses: tj-actions/changed-files@v35
+        with:
+          files: scripts/*.js
+          json_raw_format: "true"
