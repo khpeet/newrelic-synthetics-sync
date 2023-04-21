@@ -29,6 +29,7 @@ jobs:
           contents=()
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             cat "$file"
+          done
           #   monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
           #   echo $monitorName
           #   filenames+=("$monitorName")
