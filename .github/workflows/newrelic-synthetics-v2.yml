@@ -19,11 +19,12 @@ jobs:
         with:
           files: |
             **/*.js
-          json: "true"
+          json_raw_format: "true"
 
       - name: Extract File Names
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
+          echo "${{steps.changed-files.outputs.all_changed_files}}"
           changed_files=$(echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]')
           filenames=()
           for file in $changed_files; do
