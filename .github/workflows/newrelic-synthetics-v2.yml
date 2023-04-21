@@ -1,4 +1,4 @@
-name: Extract files
+name: New Relic Synthetics
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  create_browser_monitors:
+  sync_synthetic_monitors:
     runs-on: ubuntu-latest
 
     steps:
