@@ -17,15 +17,19 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v35
         with:
+          separator: ","
           files: |
             **/*.js
-          json: "true"
 
       - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo $GITHUB_WORKSPACE
-          for file in ${{steps.changed-files.outputs.all_changed_files}}; do
+          IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          for file in "${CHANGED_SCRIPTS[@]}"; do
             echo "File: $file"
             cat "$GITHUB_WORKSPACE/$file"
           done
+          unset IFS
+        shell:
+          bash
