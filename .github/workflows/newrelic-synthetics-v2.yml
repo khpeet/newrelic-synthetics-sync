@@ -19,7 +19,7 @@ jobs:
         with:
           files: |
             **/*.js
-          json_raw_format: "true"
+          json: "true"
 
       - name: Extract File Names
         if: steps.changed-files.outputs.any_changed == 'true'
