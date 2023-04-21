@@ -30,7 +30,8 @@ jobs:
           filenames=()
           for file in $changed_files; do
             filename=$(basename $file)
-            jsname=${filename%.*}
+            filename=$(echo "$filename" | xargs)
+            jsname=${filename%%.js}
             echo $jsname
             filenames+=("$jsname")
           done
