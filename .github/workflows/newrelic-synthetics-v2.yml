@@ -19,23 +19,14 @@ jobs:
         with:
           files: |
             **/*.js
-          json_raw_format: "true"
+          json: "true"
 
       - name: Extract File Names
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo "${{steps.changed-files.outputs.all_changed_files}}"
-          echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]'
-          changed_files=$(echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]')
-          filenames=()
-          for file in $changed_files; do
-            basefile=$(basename "$basefile")
-            filename=$(echo "$basefile" | xargs)
-            jsname=${filename%%.js}
-            echo $jsname
-            filenames+=("$jsname")
-          done
-          echo $filenames
+          # Parse out filenames to use as monitorNames in New Relic
+          readarray -t js_filenames <<< "$(echo "${{steps.changed-files.outputs.all_changed_files}}" | xargs -I{} basename "{}")"
+          echo $js_filenames
 
     # - name: Call New Relic Entity Search GraphQL API
     #   if: steps.get-changed-scripts.outputs.any_changed == 'true'
