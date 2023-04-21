@@ -18,8 +18,8 @@ jobs:
         uses: tj-actions/changed-files@v35
         with:
           files: |
-            scripts/*.js
-          json_raw_format: 'true'
+            *.js
+          json_raw_format: "true"
 
       - name: Extract File Names
         if: steps.changed-scripts.outputs.any_changed == 'true'
