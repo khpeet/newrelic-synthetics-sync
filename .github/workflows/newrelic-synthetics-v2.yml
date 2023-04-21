@@ -21,8 +21,14 @@ jobs:
             **/*.js
           json: "true"
 
-      - name: Sync with New Relic Synthetics #Use custom python here to parse files, run entitySearch, and upload to NR
+      - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          # Parse out filenames to use as monitorNames in New Relic
           echo ${{steps.changed-files.outputs.all_changed_files}}
+          echo "${{steps.changed-files.outputs.all_changed_files}}" | tr '\n' ',' | sed 's/.$//' > files.txt
+
+          for file in $(cat files.txt); do
+            echo "Storing contents of $file"
+            script=$(cat "$file")
+            echo $script
+          done
