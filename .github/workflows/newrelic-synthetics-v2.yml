@@ -14,19 +14,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get Changed Scripts
+        id: changed-scripts
         uses: tj-actions/changed-files@v35
         with:
           files: |
             scripts/*.js
-          output-format: array
-        id: get-changed-scripts
+          json_raw_format: 'true'
 
       - name: Extract File Names
-        if: steps.get-changed-js-files.outputs.files != '[]'
+        if: steps.changed-scripts.outputs.any_changed == 'true'
         run: |
-          echo "${{steps.get-changed-scripts.outputs.files}}" | tr -d '[]' | tr -d '"' | tr ',' '\n' > changed-scripts.txt
-          mapfile -t changed_scripts_file_array < changed-scripts.txt
-          echo "${changed_scripts_files_array[@]}"
+          echo "${{steps.changed-scripts.outputs.all_changed_files}}"
 
     # - name: Call New Relic Entity Search GraphQL API
     #   if: steps.get-changed-scripts.outputs.any_changed == 'true'
