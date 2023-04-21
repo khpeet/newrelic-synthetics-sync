@@ -26,15 +26,16 @@ jobs:
         run: |
           echo ${{steps.changed-files.outputs.all_changed_files}}
           changed_files=(${{steps.changed-files.outputs.all_changed_files}})
+          echo $changed_files
           filenames=()
           contents=()
           for file in "${changed_files[@]}"
           do
             monitorName=$(echo basename ${file%.*} | sed "s/.*\///")
             echo $monitorName
-            filename=$(basename "$file")
-            filenames+=("$filename")
-            content=$(cat "$file")
+            filenames+=("$monitorName")
+            echo "$GITHUB_WORKSPACE/$file"
+            content=$(cat "$GITHUB_WORKSPACE/$file")
             contents+=("$content")
           done
           echo "File names: ${filenames[@]}"
