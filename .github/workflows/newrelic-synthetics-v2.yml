@@ -13,58 +13,48 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Get changed files
-      id: get-changed-scripts
-      uses: tj-actions/changed-files@v35
-      with:
-        files: scripts/*.js
+      - name: Get Changed Scripts
+        uses: tj-actions/get-changed-files@v35
+        with:
+          files: '*.js'
+          output-format: array
+        id: get-changed-scripts
 
-    - name: Check if any JavaScript files changed
-      run: |
-        CHANGED_FILES="${{ steps.get-changed-scripts.outputs.files }}"
-        if [ -z "$CHANGED_FILES" ]; then
-          echo "No JavaScript files changed."
-          exit 0
-        fi
+      - name: Extract File Names
+        if: steps.get-changed-js-files.outputs.files != '[]'
+        run: |
+          echo "${{steps.get-changed-scripts.outputs.files}}" | tr -d '[]' | tr -d '"' | tr ',' '\n' > changed-scripts.txt
+          mapfile -t changed_scripts_file_array < changed-scripts.txt
+          echo "${changed_scripts_files_array[@]}"
 
-    - name: Extract file names
-      if: steps.get-changed-scripts.outputs.any_changed == 'true'
-      id: extract-files
-      run: |
-        CHANGED_FILES="${{ steps.get-changed-scripts.outputs.files }}"
-        while read -r FILE; do
-          FILE_NAME=$(basename -- "$FILE")
-          echo "::set-output name=names::$FILE_NAME"
-        done <<< "$CHANGED_FILES"
-
-    - name: Call New Relic Entity Search GraphQL API
-      if: steps.get-changed-scripts.outputs.any_changed == 'true'
-      env:
-        NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }} # Add your New Relic API key as a secret in your GitHub repository
-      id: search_entities
-      run: |
-        FILE_NAMES="${{ steps.extract-files.outputs.names }}"
-
-        # Split file names into an array
-        IFS=$'\n' read -rd '' -a FILE_NAME_ARRAY <<<"$FILE_NAMES"
-
-        ENTITY_DATA=""
-        for i in "${!FILE_NAME_ARRAY[@]}"; do
-          FILE_NAME="${FILE_NAME_ARRAY[$i]}"
-
-          # Make API request to search for New Relic entity with the same name as the file and filtering to domain:SYNTH
-          RESPONSE=$(curl -s -X POST 'https://api.newrelic.com/graphql' \
-          -H "Content-Type: application/json" \
-          -H "API-Key: $NEW_RELIC_API_KEY" \
-          -d '{"query":"query SearchEntities($searchQuery: String!) { actor { entitySearch(query: $searchQuery) { count results { entities { name domain guid } } } } } }","variables":{"searchQuery":"name:'"$FILE_NAME"' domain:SYNTH"}}')
-
-          # Check if API request was successful and entity with the same name as the file exists
-          if [[ $RESPONSE == *"\"name\": \"$FILE_NAME\""* ]]; then
-            # Extract guid from API response
-            GUID=$(echo "$RESPONSE" | jq -r '.data.actor.entitySearch.results.entities[0].guid')
-            ENTITY_DATA+="$FILE_NAME:$GUID\n"
-          else
-            echo "No New Relic entity with the name $FILE_NAME found."
-          fi
-        done
-        echo "::set-output name=entities::$ENTITY_DATA"
+    # - name: Call New Relic Entity Search GraphQL API
+    #   if: steps.get-changed-scripts.outputs.any_changed == 'true'
+    #   env:
+    #     NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }} # Add your New Relic API key as a secret in your GitHub repository
+    #   id: search_entities
+    #   run: |
+    #     FILE_NAMES="${{ steps.extract-files.outputs.names }}"
+    #
+    #     # Split file names into an array
+    #     IFS=$'\n' read -rd '' -a FILE_NAME_ARRAY <<<"$FILE_NAMES"
+    #
+    #     ENTITY_DATA=""
+    #     for i in "${!FILE_NAME_ARRAY[@]}"; do
+    #       FILE_NAME="${FILE_NAME_ARRAY[$i]}"
+    #
+    #       # Make API request to search for New Relic entity with the same name as the file and filtering to domain:SYNTH
+    #       RESPONSE=$(curl -s -X POST 'https://api.newrelic.com/graphql' \
+    #       -H "Content-Type: application/json" \
+    #       -H "API-Key: $NEW_RELIC_API_KEY" \
+    #       -d '{"query":"query SearchEntities($searchQuery: String!) { actor { entitySearch(query: $searchQuery) { count results { entities { name domain guid } } } } } }","variables":{"searchQuery":"name:'"$FILE_NAME"' domain:SYNTH"}}')
+    #
+    #       # Check if API request was successful and entity with the same name as the file exists
+    #       if [[ $RESPONSE == *"\"name\": \"$FILE_NAME\""* ]]; then
+    #         # Extract guid from API response
+    #         GUID=$(echo "$RESPONSE" | jq -r '.data.actor.entitySearch.results.entities[0].guid')
+    #         ENTITY_DATA+="$FILE_NAME:$GUID\n"
+    #       else
+    #         echo "No New Relic entity with the name $FILE_NAME found."
+    #       fi
+    #     done
+    #     echo "::set-output name=entities::$ENTITY_DATA"
