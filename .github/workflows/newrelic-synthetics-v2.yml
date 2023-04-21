@@ -17,7 +17,8 @@ jobs:
         id: changed-scripts
         uses: tj-actions/changed-files@v35
         with:
-          files: '*.js'
+          files: |
+            *.js
           json_raw_format: "true"
 
       - name: Extract File Names
