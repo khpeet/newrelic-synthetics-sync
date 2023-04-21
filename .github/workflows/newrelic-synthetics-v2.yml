@@ -29,8 +29,8 @@ jobs:
           changed_files=$(echo "${{steps.changed-files.outputs.all_changed_files}}" | jq -r '.[]')
           filenames=()
           for file in $changed_files; do
-            filename=$(basename $file)
-            filename=$(echo "$filename" | xargs)
+            basefile="$(basename $basefile)"
+            filename=$(echo "$basefile" | xargs)
             jsname=${filename%%.js}
             echo $jsname
             filenames+=("$jsname")

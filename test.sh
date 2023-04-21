@@ -11,7 +11,7 @@
 
 
 # string="ABC I&O: https://cooperost.icsconnect.com/.js"
-string="new_runteimt_a-fun.js"
+string="Fun yes here.js"
 
 # remove any leading or trailing spaces
 string=$(echo "$string" | xargs)
