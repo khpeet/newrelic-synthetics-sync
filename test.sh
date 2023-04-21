@@ -1,13 +1,8 @@
 #!/bin/bash
 
-files=$(echo "["scripts/New Runtime Example.js","scripts/runtime2.js"]" | tr '\n' ',' | sed 's/.$//')
-echo $files
-
-for f in files; do
-  script=$(cat "$f")
-  echo $script
-done
-
+echo [\"scripts/New Runtime Example.js\",\"scripts/runtime2.js\"]
+changed_files=(${steps.changed-files.outputs.all_changed_files})
+echo $changed_files
 
 # ["scripts/New Runtime Example.js","scripts/runtime2.js"]
 #
