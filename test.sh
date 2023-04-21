@@ -10,13 +10,13 @@
 # echo $jsname
 
 
-# string="ABC I&O: https://cooperost.icsconnect.com/.js"
-string="Fun yes here.js"
-
-# remove any leading or trailing spaces
-string=$(echo "$string" | xargs)
-
-# extract characters before .js
-filename=${string%%.js}
-
-echo $filename
+# echo "[\"scripts/New Runtime Example.js\",\"scripts/runtime2.js\"]" | jq -r '.[]'
+changed_files=$(echo "[\"scripts/New Runtime Example.js\",\"scripts/runtime2.js\"]" | jq -r '.[]')
+echo $changed_files
+filenames=()
+for file in $changed_files; do
+  monitorName=$(echo basename ${f%.*} | sed "s/.*\///")
+  echo $monitorName
+  filenames+=("$monitorName")
+done
+echo $filenames
