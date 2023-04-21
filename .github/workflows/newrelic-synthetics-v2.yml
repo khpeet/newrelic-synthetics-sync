@@ -16,7 +16,8 @@ jobs:
       - name: Get Changed Scripts
         uses: tj-actions/changed-files@v35
         with:
-          files: '*.js'
+          files: |
+            scripts/*.js
           output-format: array
         id: get-changed-scripts
 
