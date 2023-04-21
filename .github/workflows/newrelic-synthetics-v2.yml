@@ -11,14 +11,13 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Get changed files
       id: get-changed-scripts
-      uses: tj-actions/changed-files@v2
+      uses: tj-actions/changed-files@v35
       with:
-        output-format: string
-        file-extension: '.js'
+        files: scripts/*.js
 
     - name: Check if any JavaScript files changed
       run: |

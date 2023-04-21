@@ -2,7 +2,7 @@
 var elementWaitTimer = 10000;
 
 const url_to_monitor = 'https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=simple-login-form';
-const user = 'keagan1';
+const user = 'keagan12';
 const pass = 'test';
 /** CONFIGURATION **/
 
