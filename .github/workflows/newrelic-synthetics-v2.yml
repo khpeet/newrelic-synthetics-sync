@@ -25,14 +25,13 @@ jobs:
         id: scripts
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo $GITHUB_WORKSPACE
           gh_space=${{ github.workspace }}
           echo $gh_space
           IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
           monitors=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
-            echo "$GITHUB_WORKSPACE/$file"
-            monitorScript=$(cat "$GITHUB_WORKSPACE/$file")
+            echo "$gh_space/$file"
+            monitorScript=$(cat "$gh_space/$file")
             echo $monitorScript
             monitors+=("{\"name\":\"$file\", \"script\":\"$monitorScript\"}")
           done
