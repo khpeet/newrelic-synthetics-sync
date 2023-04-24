@@ -26,6 +26,8 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo $GITHUB_WORKSPACE
+          gh_space=${{ github.workspace }}
+          echo $gh_space
           IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
           monitors=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
