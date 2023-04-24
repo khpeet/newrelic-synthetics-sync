@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }}
+
 jobs:
   sync_synthetic_monitors:
     runs-on: ubuntu-latest
@@ -17,25 +20,12 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v35
         with:
-          separator: ","
           files: |
             **/*.js
+          json: "true"
 
       - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
         id: scripts
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          gh_space=${{ github.workspace }}
-          echo $gh_space
-          IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
-          monitors=()
-          for file in "${CHANGED_SCRIPTS[@]}"; do
-            echo "$gh_space/$file"
-            monitorScript=$(cat "$gh_space/$file")
-            echo $monitorScript
-            monitors+=("{\"name\":\"$file\", \"script\":\"$monitorScript\"}")
-          done
-          echo $monitors
-          unset IFS
-        shell:
-          bash
+          echo ${{ steps.changed-files.outputs.all_changed_files }}
