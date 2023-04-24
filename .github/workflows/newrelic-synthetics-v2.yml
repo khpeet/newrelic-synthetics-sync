@@ -22,12 +22,14 @@ jobs:
             **/*.js
 
       - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
+        id: scripts
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo $GITHUB_WORKSPACE
           script_path=$(find $GITHUB_WORKSPACE -name "$script_name" | head -n 1)
           echo $script_path
           IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          echo $GITHUB_WORKSPACE
           monitors=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
             monitorScript=$(cat "$GITHUB_WORKSPACE/$file")
