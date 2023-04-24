@@ -27,7 +27,7 @@ jobs:
           echo $GITHUB_WORKSPACE
           IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
           monitorNames=()
-          scripts()
+          scripts=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
             monitorNames+=$file
             script=$(cat "$GITHUB_WORKSPACE/$file")
