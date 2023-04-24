@@ -28,4 +28,5 @@ jobs:
         id: scripts
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo ${{ steps.changed-files.outputs.all_changed_files }}
+          echo ${{ steps.changed-files.outputs.all_changed_files }} > monitors.json
+          cat monitors.json
