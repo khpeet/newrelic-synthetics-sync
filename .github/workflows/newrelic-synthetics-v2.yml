@@ -20,7 +20,7 @@ jobs:
           separator: ","
           files: |
             **/*.js
-          json_raw_format: "true"
+          json: "true"
 
       - name: Extract Filenames
         if: steps.changed-files.outputs.any_changed == 'true'
