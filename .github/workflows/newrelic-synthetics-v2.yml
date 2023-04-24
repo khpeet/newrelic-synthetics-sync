@@ -29,6 +29,7 @@ jobs:
           monitorNames=()
           scripts=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
+            echo $file
             monitorNames+=$file
             script=$(cat "$GITHUB_WORKSPACE/$file")
             scripts+=$script
