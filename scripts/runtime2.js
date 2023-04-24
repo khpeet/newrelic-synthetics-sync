@@ -1,1 +1,1 @@
-console.log('Simple Scriptsss');
+console.log('Simple Scriptssss');
