@@ -19,13 +19,14 @@ jobs:
         with:
           files: |
             **/*.js
-          json: "true"
+          json_raw_format: "true"
 
       - name: Extract Filenames
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo ${{ steps.changed-files.outputs.all_changed_files }} > monitors.json
+          echo ${{ steps.changed-files.outputs.all_changed_files }} > monitors.txt
+          cat monitors.txt
 
-      - name: Sync w/ Synthetics
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./
+      # - name: Sync w/ Synthetics
+      #   if: steps.changed-files.outputs.any_changed == 'true'
+      #   uses: ./
