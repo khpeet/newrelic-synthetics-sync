@@ -2,7 +2,6 @@ name: New Relic Synthetics Sync
 description: Updates Synthetics scripted monitors within New Relic on commits.
 author: khpeet
 
-
 runs:
   using: "docker"
   image: "Dockerfile"

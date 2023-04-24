@@ -1,5 +1,1 @@
-dfkmsdfsasddfasdaasdassfdfssssdsfsdfsfsdssssssssssssssss
-safafs
-asdasds
-sadsada
-ss
+console.log('Simple Script');

@@ -1,9 +1,6 @@
 name: New Relic Synthetics
 
-on:
-  push:
-    branches:
-      - main
+on: ['push']
 
 env:
   NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }}
@@ -13,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Get Changed Scripts
@@ -24,9 +21,11 @@ jobs:
             **/*.js
           json: "true"
 
-      - name: Extract FileNames and Script #Use custom python here to parse files, run entitySearch, and upload to NR
-        id: scripts
+      - name: Extract Filenames
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo ${{ steps.changed-files.outputs.all_changed_files }} > monitors.json
-          cat monitors.json
+
+      - name: Sync w/ Synthetics
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./newrelic-synthetics-sync
