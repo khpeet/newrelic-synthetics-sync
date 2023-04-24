@@ -26,15 +26,13 @@ jobs:
         run: |
           echo $GITHUB_WORKSPACE
           IFS=$',' read -a CHANGED_SCRIPTS <<< "${{ steps.changed-files.outputs.all_changed_files }}"
-          monitorNames=()
-          monitorScripts=()
+          monitors=()
           for file in "${CHANGED_SCRIPTS[@]}"; do
-            monitorNames+=$file
             monitorScript=$(cat "$GITHUB_WORKSPACE/$file")
             echo $monitorScript
-            monitorScripts+=$monitorScript
+            monitors+=("{\"name\":\"$file\", \"script\":\"$monitorScript\"}")
           done
-          echo $monitorScripts
+          echo $monitors
           unset IFS
         shell:
           bash
