@@ -1,2 +1,2 @@
 //monitorType: SCRIPT_API
-console.log('Simple Scripts22sss');
+console.log('Scripted API');

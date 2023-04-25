@@ -159,9 +159,12 @@ def updateMonitor(monitor, script):
             try:
                 r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                 resp = r.json()
-                if (resp['data'][type]['errors']):
+                if ('errors' in resp):
                     print("Error updating monitor: " + monitor['name'] + 'Skipping...')
                     print(resp['errors'])
+                elif ('errors' in resp['data'][type]):
+                    print("Error updating monitor: " + monitor['name'] + 'Skipping...')
+                    print(resp['data'][type]['errors'])
                 else:
                     print("Successfully updated monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
             except requests.exceptions.RequestException as e:
@@ -207,7 +210,11 @@ def createMonitor(monitor, inputs):
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
                     print(resp)
-                    if (resp['data'][type]['errors']):
+
+                    if ('errors' in resp):
+                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+                        print(resp['errors']
+                    elif ('errors' in resp['data'][type]):
                         print("Error creating monitor: " + monitor['name'] + 'Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
@@ -238,7 +245,10 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    if (resp['data'][type]['errors']):
+                    if ('errors' in resp):
+                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+                        print(resp['errors']
+                    elif ('errors' in resp['data'][type]):
                         print("Error creating monitor: " + monitor['name'] + 'Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
