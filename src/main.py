@@ -162,7 +162,7 @@ def updateMonitor(monitor, script):
                 if ('errors' in resp):
                     print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['errors'])
-                elif ('errors' in resp['data'][type]):
+                elif (len(resp['data'][type]['errors']) > 0):
                     print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['data'][type]['errors'])
                 else:
@@ -211,7 +211,7 @@ def createMonitor(monitor, inputs):
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
-                    elif ('errors' in resp['data'][type]):
+                    elif (len(resp['data'][type]['errors']) > 0):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
@@ -244,7 +244,7 @@ def createMonitor(monitor, inputs):
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
-                    elif ('errors' in resp['data'][type]):
+                    elif (len(resp['data'][type]['errors']) > 0):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
