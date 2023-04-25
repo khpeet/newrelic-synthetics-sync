@@ -108,7 +108,7 @@ def getMonitor(name):
     try:
         r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
         resp = r.json()
-        if (r.status_code == 200):
+        if ('errors' not in resp):
             if (len(resp['data']['actor']['entitySearch']['results']['entities']) > 0):
                 monitorResp = resp['data']['actor']['entitySearch']['results']['entities'][0]
                 return monitorResp
@@ -202,9 +202,9 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    if (resp['errors']):
+                    if (resp['data'][type]['errors']):
                         print("Error creating monitor: " + monitor['name'] + 'Skipping...')
-                        print(resp['errors'])
+                        print(resp['data'][type]['errors'])
                     else:
                         print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
                 except requests.exceptions.RequestException as e:
@@ -233,9 +233,9 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    if (resp['errors']):
+                    if (resp['data'][type]['errors']):
                         print("Error creating monitor: " + monitor['name'] + 'Skipping...')
-                        print(resp['errors'])
+                        print(resp['data'][type]['errors'])
                     else:
                         print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
                 except requests.exceptions.RequestException as e:
