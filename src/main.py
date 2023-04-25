@@ -56,10 +56,9 @@ def getInputs():
     status = core.get_input('status', required=False)
     privateLocations = eval(privateLocString)
     publicLocations = eval(publicLocString)
-    locations = ""
 
     if (type(publicLocations) is str and type(privateLocations) is str): # Both pub/private locations are default empty string
-        continue
+        locations = ""
     elif (type(publicLocations) is str and type(privateLocations) is not str): #Only private locations configured
         locations = {'private': privateLocations}
     elif (type(publicLocations) is not str and type(privateLocations) is str): #Only public locations configured
