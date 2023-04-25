@@ -2,6 +2,7 @@ import requests
 import json
 import re
 import sys
+import os
 from actions_toolkit import core
 
 GRAPHQL_API = 'https://api.newrelic.com/graphql'
