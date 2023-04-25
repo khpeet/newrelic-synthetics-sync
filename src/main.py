@@ -184,8 +184,8 @@ def createMonitor(monitor, inputs):
             if (inputs['runtime'] == 'new'):
                 inputs['runtime'] = {'runtimeType': "NODE_API", 'runtimeTypeVersion': "16.10"}
 
-        if (type != None):
-            if (inputs['runtime'] != None):
+        if (type != None): # Monitor Type required
+            if (inputs['runtime'] != None): #create monitor against new (latest) runtime
                 vars = {"account": int(inputs['account']), "runtime": inputs['runtime'], "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": monitor['script'], "status": inputs['status']}
                 gql = f"""
                     mutation($account: Int!, $runtime: SyntheticsRuntimeInput, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
