@@ -14,15 +14,15 @@ def main():
     inputs = getInputs()
     print(inputs)
 
-    # for monitor in fileNames:
-    #     m = getMonitor(monitor['name'])
-    #     if (m != 'none'):
-    #         updateMonitor(m, monitor['script'])
-    #     else:
-    #         if any(input == "" for input in inputs.values()):
-    #             print('Missing inputs to create new monitor. Please review inputs on step `Sync Changes to Synthetics`.')
-    #         else:
-    #             createMonitor(monitor, monitor['script'], inputs)
+    for monitor in fileNames:
+        m = getMonitor(monitor['name'])
+        if (m != 'none'):
+            updateMonitor(m, monitor['script'])
+        else:
+            if any(input == "" for input in inputs.values()):
+                print('Missing inputs to create new monitor. Please review inputs on step `Sync Changes to Synthetics`.')
+            else:
+                createMonitor(monitor, monitor['script'], inputs)
 
 
 def readAndParseFile():
