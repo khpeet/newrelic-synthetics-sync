@@ -24,11 +24,15 @@ def main():
             else:
                 if ('SCRIPT_API' in monitor['script']):
                     monitor['monitorType'] = 'SCRIPT_API'
-
-                if ('SCRIPT_BROWSER' in monitor['script']):
+                elif ('SCRIPT_BROWSER' in monitor['script']):
                     monitor['monitorType'] = 'SCRIPT_BROWSER'
+                else:
+                    monitor['monitorType'] = 'undefined'
 
-                createMonitor(monitor, inputs)
+                if monitor['monitorType'] != 'undefined':
+                    createMonitor(monitor, inputs)
+                else:
+                    print('`monitorType` not defined in script: ' + monitor['name'] + '. Monitor will not be created. Please add monitorType as a comment within your new script.')
 
 
 def readAndParseFile():
@@ -75,7 +79,7 @@ def getInputs():
     if runtime == "old":
         runtime = None
 
-    createInputs = {'account': int(acctId), 'runtime': runtime, 'locations': locations, 'interval': interval, 'status': status}
+    createInputs = {'account': acctId, 'runtime': runtime, 'locations': locations, 'interval': interval, 'status': status}
 
     return createInputs
 
@@ -180,7 +184,7 @@ def createMonitor(monitor, inputs):
 
         if (type != None):
             if (inputs['runtime'] != None):
-                vars = {"account": inputs['account'], "runtime": inputs['runtime'], "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": monitor['script'], "status": inputs['status']}
+                vars = {"account": int(inputs['account']), "runtime": inputs['runtime'], "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": monitor['script'], "status": inputs['status']}
                 print(vars)
                 gql = f"""
                     mutation($account: Int!, $runtime: SyntheticsRuntimeInput, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
@@ -211,7 +215,7 @@ def createMonitor(monitor, inputs):
                     print("Error creating monitor: " + monitor['name'] + ' Skipping...')
                     print(e)
             else:
-                vars = {"account": inputs['account'], "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
+                vars = {"account": int(inputs['account']), "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
                 print(vars)
                 gql = f"""
                     mutation($account: Int!, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
