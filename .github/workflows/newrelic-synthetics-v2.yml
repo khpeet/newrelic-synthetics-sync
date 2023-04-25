@@ -32,7 +32,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./
         with: # all optional defaults for creation of new scripts committed
-          accountId: 148203
+          accountId: 1482036
           runtime: "new"
           privateLocations: "[{'guid': 'MTQ4MjAzNnxTWU5USHxQUklWQVRFX0xPQ0FUSU9OfDNlOWFkNzdkLTZjNTItNDEwYy1iY2Y5LWVlY2IwN2RjZTI1Yg'}]"
           publicLocations: "['AWS_AP_EAST_1', 'AWS_US_EAST_2']"

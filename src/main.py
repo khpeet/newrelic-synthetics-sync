@@ -159,15 +159,15 @@ def updateMonitor(monitor, script):
                 r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                 resp = r.json()
                 if ('errors' in resp):
-                    print("Error updating monitor: " + monitor['name'] + 'Skipping...')
+                    print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['errors'])
                 elif ('errors' in resp['data'][type]):
-                    print("Error updating monitor: " + monitor['name'] + 'Skipping...')
+                    print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['data'][type]['errors'])
                 else:
                     print("Successfully updated monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
             except requests.exceptions.RequestException as e:
-                print("Error updating monitor: " + monitor['name'] + ' Skipping...')
+                print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                 print(e)
         else:
             print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping update...")
