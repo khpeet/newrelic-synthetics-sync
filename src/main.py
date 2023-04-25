@@ -158,6 +158,7 @@ def updateMonitor(monitor, script):
             try:
                 r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                 resp = r.json()
+                print(resp)
                 if ('errors' in resp):
                     print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['errors'])
@@ -206,6 +207,7 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
+                    print(resp)
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
@@ -217,7 +219,7 @@ def createMonitor(monitor, inputs):
                 except requests.exceptions.RequestException as e:
                     print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                     print(e)
-            else:
+            else: #create monitor against legacy runtime
                 vars = {"account": int(inputs['account']), "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
                 gql = f"""
                     mutation($account: Int!, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
@@ -238,6 +240,7 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
+                    print(resp)
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
