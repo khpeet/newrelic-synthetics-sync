@@ -8,23 +8,27 @@ branding:
 
 inputs:
   accountId:
-    description: "New Relic account id in which new script will be created within."
+    description: "New Relic account id in which new monitor will be created within."
+    required: false
+    default: ""
+  runtime:
+    description: "Synthetics runtime the monitor will use."
     required: false
     default: ""
   privateLocations:
-    description: "Private location ids that the monitor will execute on."
+    description: "Private location guids that the new monitor will execute on."
     required: false
     default: ""
   publicLocations:
-    description: "Public location ids that the monitor will execute on."
+    description: "Public location names that the new monitor will execute on."
     required: false
     default: ""
   interval:
-    description: "The execution frequency of new script created."
+    description: "The execution frequency of new monitor created."
     required: false
     default: ""
   status:
-    description: "Whether a new script created within New Relic will be enabled or disabled."
+    description: "Whether a new monitor created within New Relic will be enabled or disabled."
     required: false
     default: ""
 
@@ -35,6 +39,7 @@ runs:
   image: "Dockerfile"
   args:
     - ${{ inputs.accountId }}
+    - ${{ inputs.runtime }}
     - ${{ inputs.privateLocations }}
     - ${{ inputs.publicLocations }}
     - ${{ inputs.interval }}

@@ -11,22 +11,18 @@ WORKSPACE = os.getenv('GITHUB_WORKSPACE')
 
 def main():
     fileNames = readAndParseFile()
-    print(fileNames)
-
-    acct = core.get_input('accountId', required=False)
-    print(acct)
-
-    # n = len(sys.argv)
-    # print(n)
-    # print(sys.argv)
-    # core.get_input('name', required=False)
+    inputs = getInputs()
+    print(inputs)
 
     # for monitor in fileNames:
     #     m = getMonitor(monitor['name'])
     #     if (m != 'none'):
     #         updateMonitor(m, monitor['script'])
     #     else:
-    #         createMonitor(monitor, monitor['script'])
+    #         if any(input == "" for input in inputs.values()):
+    #             print('Missing inputs to create new monitor. Please review inputs on step `Sync Changes to Synthetics`.')
+    #         else:
+    #             createMonitor(monitor, monitor['script'], inputs)
 
 
 def readAndParseFile():
@@ -49,6 +45,36 @@ def readAndParseFile():
         sys.exit(1)
 
     return formatted
+
+def getInputs():
+    #Inputs for creation of new monitor upon new script commit[optional]
+    acctId = core.get_input('accountId', required=False)
+    runtime = core.get_input('runtime', required=False) #new or old
+    privateLocString = core.get_input('privateLocations', required=False)
+    publicLocString = core.get_input('publicLocations', required=False)
+    interval = core.get_input('interval', required=False)
+    status = core.get_input('status', required=False)
+    privateLocations = eval(privateLocString)
+    publicLocations = eval(publicLocString)
+    locations = ""
+
+    if (type(publicLocations) is str and type(privateLocations) is str): # Both pub/private locations are default empty string
+        continue
+    elif (type(publicLocations) is str and type(privateLocations) is not str): #Only private locations configured
+        locations = {'private': privateLocations}
+    elif (type(publicLocations) is not str and type(privateLocations) is str): #Only public locations configured
+        locations = {'public': publicLocations}
+    else: # both public and private configured
+        locations = {'private': privateLocations, 'public': publicLocations}
+
+    #locations: {private: [{guid: "MTQ4MjAzNnxTWU5USHxQUklWQVRFX0xPQ0FUSU9OfDNlOWFkNzdkLTZjNTItNDEwYy1iY2Y5LWVlY2IwN2RjZTI1Yg"}], public: ["AWS_AP_EAST_1", "AWS_US_EAST_2"]}
+
+    if runtime == "old":
+        runtime = None
+
+    createInputs = {'account': acctId, 'runtime': runtime, 'locations': locations, 'interval': interval, 'status': status}
+
+    return createInputs
 
 
 def getMonitor(name):
@@ -122,67 +148,100 @@ def updateMonitor(monitor, script):
                   }}
                 }}
             """
-            h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
-            try:
-                r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
-                resp = r.json()
-                if (resp['data'][type]['errors']):
-                    print("Error updating monitor: " + monitor['name'] + 'Skipping...')
-                    print(resp['errors'])
-                else:
-                    print("Successfully updated monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
-            except requests.exceptions.RequestException as e:
-                print("Error updating monitor: " + monitor['name'] + ' Skipping...')
-                print(e)
-        else:
-            print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping update...")
-
-def createMonitor(monitor, script):
-        vars = {"account": 1, "locations": locs, "name": monitor['name'], "interval": intval, "script": script, "status": status}
-        type = None
-
-        #only proceed if inputs defined in action.yml exist in workflow yaml*** print error if any are missing***
-
-        #locations example -- {private: [{guid: ""}], public: ['LOCATION_1', 'LOCATION_2']}
-        #runtime -- {runtimeType: "", runtimeTypeVersion: ""} -- need type/version inputs here
-
-        if (monitor['monitorType'] == 'SCRIPT_BROWSER'):
-            type = 'syntheticsCreateScriptBrowserMonitor'
-        elif (monitor['monitorType'] == 'SCRIPT_API'):
-            type = 'syntheticsCreateScriptApiMonitor'
-
-
-        if (type != None):
-            gql = f"""
-                mutation($account: Int!, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
-                  {type}(accountId: $account, monitor: {{locations: $locations, name: $name, period: $interval, runtime: {{runtimeType: "", runtimeTypeVersion: ""}}, script: $script, status: $status}}) {{
-                    errors {{
-                      description
-                      type
-                    }}
-                    monitor {{
-                      guid
-                      name
-                      status
-                    }}
-                  }}
-                }}
-            """
             print(gql)
         #     h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
         #     try:
         #         r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
         #         resp = r.json()
-        #         if (resp['errors']):
-        #             print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+        #         if (resp['data'][type]['errors']):
+        #             print("Error updating monitor: " + monitor['name'] + 'Skipping...')
         #             print(resp['errors'])
         #         else:
-        #             print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
+        #             print("Successfully updated monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
         #     except requests.exceptions.RequestException as e:
-        #         print("Error creating monitor: " + monitor['name'] + ' Skipping...')
+        #         print("Error updating monitor: " + monitor['name'] + ' Skipping...')
         #         print(e)
         # else:
-        #     print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping create...")
+        #     print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping update...")
+
+def createMonitor(monitor, script, inputs):
+        type = None
+
+        if (monitor['monitorType'] == 'SCRIPT_BROWSER'):
+            type = 'syntheticsCreateScriptBrowserMonitor'
+            if (inputs['runtime'] == 'new'):
+                inputs['runtime'] = {runtimeType: "CHROME_BROWSER", runtimeTypeVersion: "100"}
+        elif (monitor['monitorType'] == 'SCRIPT_API'):
+            type = 'syntheticsCreateScriptApiMonitor'
+            if (inputs['runtime'] == 'new'):
+                inputs['runtime'] = {runtimeType: "NODE_API", runtimeTypeVersion: "16.10"}
+
+
+        if (type != None):
+            if (inputs['runtime'] != None):
+                vars = {"account": inputs['account'], "runtime": inputs['runtime'], "locations": inputs['location'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
+                print(vars)
+                gql = f"""
+                    mutation($account: Int!, $runtime: SyntheticsRuntimeInput, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
+                      {type}(accountId: $account, monitor: {{locations: $locations, name: $name, period: $interval, runtime: $runtime, script: $script, status: $status}}) {{
+                        errors {{
+                          description
+                          type
+                        }}
+                        monitor {{
+                          guid
+                          name
+                          status
+                        }}
+                      }}
+                    }}
+                """
+                print(gql)
+            #     h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
+            #     try:
+            #         r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
+            #         resp = r.json()
+            #         if (resp['errors']):
+            #             print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+            #             print(resp['errors'])
+            #         else:
+            #             print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
+            #     except requests.exceptions.RequestException as e:
+            #         print("Error creating monitor: " + monitor['name'] + ' Skipping...')
+            #         print(e)
+            else:
+                vars = {"account": inputs['account'], "locations": inputs['location'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
+                print(vars)
+                gql = f"""
+                    mutation($account: Int!, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
+                      {type}(accountId: $account, monitor: {{locations: $locations, name: $name, period: $interval, script: $script, status: $status}}) {{
+                        errors {{
+                          description
+                          type
+                        }}
+                        monitor {{
+                          guid
+                          name
+                          status
+                        }}
+                      }}
+                    }}
+                """
+                print(gql)
+            #     h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
+            #     try:
+            #         r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
+            #         resp = r.json()
+            #         if (resp['errors']):
+            #             print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+            #             print(resp['errors'])
+            #         else:
+            #             print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
+            #     except requests.exceptions.RequestException as e:
+            #         print("Error creating monitor: " + monitor['name'] + ' Skipping...')
+            #         print(e)
+        else:
+            print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping create...")
 
 if __name__ == '__main__':
     main()
