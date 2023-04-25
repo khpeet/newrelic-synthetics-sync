@@ -158,7 +158,6 @@ def updateMonitor(monitor, script):
             try:
                 r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                 resp = r.json()
-                print(resp)
                 if ('errors' in resp):
                     print("Error updating monitor: " + monitor['name'] + '. Skipping...')
                     print(resp['errors'])
@@ -207,7 +206,6 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    print(resp)
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
