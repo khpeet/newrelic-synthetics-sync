@@ -1,2 +1,2 @@
 //monitorType: SCRIPT_API
-console.log('Scripted API');
+console.log('Scripted APIss');

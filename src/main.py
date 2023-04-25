@@ -12,7 +12,6 @@ WORKSPACE = os.getenv('GITHUB_WORKSPACE')
 def main():
     fileNames = readAndParseFile()
     inputs = getInputs()
-    print(inputs)
 
     for monitor in fileNames:
         m = getMonitor(monitor['name'])
@@ -188,7 +187,6 @@ def createMonitor(monitor, inputs):
         if (type != None):
             if (inputs['runtime'] != None):
                 vars = {"account": int(inputs['account']), "runtime": inputs['runtime'], "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": monitor['script'], "status": inputs['status']}
-                print(vars)
                 gql = f"""
                     mutation($account: Int!, $runtime: SyntheticsRuntimeInput, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
                       {type}(accountId: $account, monitor: {{locations: $locations, name: $name, period: $interval, runtime: $runtime, script: $script, status: $status}}) {{
@@ -204,27 +202,23 @@ def createMonitor(monitor, inputs):
                       }}
                     }}
                 """
-                print(gql)
                 h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    print(resp)
-
                     if ('errors' in resp):
-                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
-                        print(resp['errors']
+                        print("Error creating monitor: " + monitor['name'] + '. Skipping...')
+                        print(resp['errors'])
                     elif ('errors' in resp['data'][type]):
-                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+                        print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
                         print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
                 except requests.exceptions.RequestException as e:
-                    print("Error creating monitor: " + monitor['name'] + ' Skipping...')
+                    print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                     print(e)
             else:
                 vars = {"account": int(inputs['account']), "locations": inputs['locations'], "name": monitor['name'], "interval": inputs['interval'], "script": script, "status": inputs['status']}
-                print(vars)
                 gql = f"""
                     mutation($account: Int!, $locations: SyntheticsScriptedMonitorLocationsInput!, $name: String!, $interval: SyntheticsMonitorPeriod!, $script: String!, $status: SyntheticsMonitorStatus! ) {{
                       {type}(accountId: $account, monitor: {{locations: $locations, name: $name, period: $interval, script: $script, status: $status}}) {{
@@ -240,21 +234,20 @@ def createMonitor(monitor, inputs):
                       }}
                     }}
                 """
-                print(gql)
                 h = {'Content-Type': 'application/json', 'API-Key': GRAPHQL_KEY}
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
                     if ('errors' in resp):
-                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
-                        print(resp['errors']
+                        print("Error creating monitor: " + monitor['name'] + '. Skipping...')
+                        print(resp['errors'])
                     elif ('errors' in resp['data'][type]):
-                        print("Error creating monitor: " + monitor['name'] + 'Skipping...')
+                        print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['data'][type]['errors'])
                     else:
                         print("Successfully created new monitor: " + resp['data'][type]['monitor']['name'] + ". Monitor is currently " + resp['data'][type]['monitor']['status'])
                 except requests.exceptions.RequestException as e:
-                    print("Error creating monitor: " + monitor['name'] + ' Skipping...')
+                    print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                     print(e)
         else:
             print('Type for monitor:' + monitor['name'] + 'is ' + monitor['monitorType'] + ". Scripted API or Browser are only accepted types. Skipping create...")
