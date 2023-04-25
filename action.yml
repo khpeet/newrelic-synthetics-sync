@@ -1,7 +1,41 @@
 name: New Relic Synthetics Sync
-description: Updates Synthetics scripted monitors within New Relic on commits.
+description: Syncs changes made to Synthetics scripted browser or api type monitors committed to a repo.
 author: khpeet
+
+branding:
+  icon: 'upload-cloud'
+  color: 'green'
+
+inputs:
+  accountId:
+    description: "New Relic account id in which new script will be created within."
+    required: false
+    default: ""
+  privateLocations:
+    description: "Private location ids that the monitor will execute on."
+    required: false
+    default: ""
+  publicLocations:
+    description: "Public location ids that the monitor will execute on."
+    required: false
+    default: ""
+  interval:
+    description: "The execution frequency of new script created."
+    required: false
+    default: ""
+  status:
+    description: "Whether a new script created within New Relic will be enabled or disabled."
+    required: false
+    default: ""
+
+
 
 runs:
   using: "docker"
   image: "Dockerfile"
+  args:
+    - ${{ inputs.accountId }}
+    - ${{ inputs.privateLocations }}
+    - ${{ inputs.publicLocations }}
+    - ${{ inputs.interval }}
+    - ${{ inputs.status }}
