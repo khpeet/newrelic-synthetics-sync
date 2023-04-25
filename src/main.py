@@ -206,6 +206,7 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
+                    print(resp)
                     if (resp['data'][type]['errors']):
                         print("Error creating monitor: " + monitor['name'] + 'Skipping...')
                         print(resp['data'][type]['errors'])
