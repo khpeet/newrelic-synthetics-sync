@@ -32,7 +32,7 @@ def main():
                 if monitor['monitorType'] != 'undefined':
                     createMonitor(monitor, inputs)
                 else:
-                    print('`monitorType` not defined in script: ' + monitor['name'] + '. Monitor will not be created. Please add monitorType as a comment within your new script.')
+                    print('`monitorType` not defined in script: ' + monitor['name'] + '. Monitor will not be created. Please add monitorType as a comment within your new script and recommit.')
 
 
 def readAndParseFile():
