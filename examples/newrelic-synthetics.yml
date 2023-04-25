@@ -1,6 +1,6 @@
 name: New Relic Synthetics
 
-on: [push, pull_request]
+on: [push]
 
 env:
   NEW_RELIC_API_KEY: ${{ secrets.NEW_RELIC_API_KEY }}
@@ -30,11 +30,11 @@ jobs:
 
       - name: Sync Changes to Synthetics
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: ./
-        with: # all optional defaults for creation of new scripts committed
-          accountId: 1482036
-          runtime: "old"
-          privateLocations: "[{'guid': 'MTQ4MjAzNnxTWU5USHxQUklWQVRFX0xPQ0FUSU9OfDNlOWFkNzdkLTZjNTItNDEwYy1iY2Y5LWVlY2IwN2RjZTI1Yg'}]"
-          publicLocations: "['AWS_AP_EAST_1', 'AWS_US_EAST_2']"
-          interval: EVERY_15_MINUTES
-          status: ENABLED
+        uses: newrelic-experimental/synthetics-sync
+        # with: # all optional defaults for creation of new scripts committed
+        #   accountId: 1
+        #   runtime: "new"
+        #   privateLocations: "[{'guid': '...'}]"
+        #   publicLocations: "['AWS_AP_EAST_1', 'AWS_US_EAST_2']"
+        #   interval: EVERY_15_MINUTES
+        #   status: ENABLED

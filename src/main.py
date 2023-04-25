@@ -14,12 +14,12 @@ def main():
     inputs = getInputs()
 
     for monitor in fileNames:
-        m = getMonitor(monitor['name'])
+        m = getMonitor(monitor['name']) # Find monitor in NR based on filename
         if (m != 'none'):
-            updateMonitor(m, monitor['script'])
+            updateMonitor(m, monitor['script']) # Update if it exists
         else:
             if any(input == "" for input in inputs.values()):
-                print('Missing inputs to create new monitor. Please review inputs on step `Sync Changes to Synthetics`.')
+                print("Missing inputs to create new monitor for file: " + monitor['name'] +  ". Please review inputs on last step if you wish to create new monitors. Skipping creation of newly committed files.")
             else:
                 if ('SCRIPT_API' in monitor['script']):
                     monitor['monitorType'] = 'SCRIPT_API'
@@ -29,9 +29,9 @@ def main():
                     monitor['monitorType'] = 'undefined'
 
                 if monitor['monitorType'] != 'undefined':
-                    createMonitor(monitor, inputs)
+                    createMonitor(monitor, inputs) #Create new if it doesnt AND inputs are correctly filled out
                 else:
-                    print('`monitorType` not defined in script: ' + monitor['name'] + '. Monitor will not be created. Please add monitorType as a comment within your new script and recommit.')
+                    print("`monitorType` not defined in script: " + monitor['name'] + ". Monitor will not be created. Please add monitorType as a comment within your new script and recommit.")
 
 
 def readAndParseFile():
@@ -238,7 +238,6 @@ def createMonitor(monitor, inputs):
                 try:
                     r = requests.post(GRAPHQL_API, headers=h, json={'query': gql, 'variables': vars})
                     resp = r.json()
-                    print(resp)
                     if ('errors' in resp):
                         print("Error creating monitor: " + monitor['name'] + '. Skipping...')
                         print(resp['errors'])
